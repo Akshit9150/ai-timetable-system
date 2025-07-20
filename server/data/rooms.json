@@ -1,0 +1,50 @@
+[
+  {
+    "id": "1",
+    "name": "A-101",
+    "capacity": 30,
+    "type": "Classroom",
+    "equipment": [
+      "Projector",
+      "Whiteboard",
+      "Computer"
+    ],
+    "building": "Building A"
+  },
+  {
+    "id": "2",
+    "name": "B-201",
+    "capacity": 25,
+    "type": "Computer Lab",
+    "equipment": [
+      "Computers",
+      "Projector",
+      "Whiteboard"
+    ],
+    "building": "Building B"
+  },
+  {
+    "id": "3",
+    "name": "Lab-301",
+    "capacity": 20,
+    "type": "Laboratory",
+    "equipment": [
+      "Lab Equipment",
+      "Safety Gear",
+      "Computers"
+    ],
+    "building": "Science Building"
+  },
+  {
+    "id": "4",
+    "name": "C-105",
+    "capacity": 35,
+    "type": "Seminar Room",
+    "equipment": [
+      "Projector",
+      "Whiteboard",
+      "Audio System"
+    ],
+    "building": "Building C"
+  }
+]

@@ -1,0 +1,86 @@
+[
+  {
+    "id": "1",
+    "name": "Morning Lecture 1",
+    "startTime": "08:00",
+    "endTime": "09:30",
+    "duration": 90,
+    "type": "lecture",
+    "days": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday"
+    ]
+  },
+  {
+    "id": "2",
+    "name": "Morning Break",
+    "startTime": "09:30",
+    "endTime": "09:45",
+    "duration": 15,
+    "type": "break",
+    "days": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday"
+    ]
+  },
+  {
+    "id": "3",
+    "name": "Morning Lecture 2",
+    "startTime": "09:45",
+    "endTime": "11:15",
+    "duration": 90,
+    "type": "lecture",
+    "days": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday"
+    ]
+  },
+  {
+    "id": "4",
+    "name": "Lunch Break",
+    "startTime": "12:00",
+    "endTime": "13:00",
+    "duration": 60,
+    "type": "lunch",
+    "days": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday"
+    ]
+  },
+  {
+    "id": "5",
+    "name": "Afternoon Lab",
+    "startTime": "14:00",
+    "endTime": "17:00",
+    "duration": 180,
+    "type": "lab",
+    "days": [
+      "Tuesday",
+      "Thursday"
+    ]
+  },
+  {
+    "name": "evening ",
+    "startTime": "15:00",
+    "endTime": "15:50",
+    "type": "lecture",
+    "days": [
+      "Saturday",
+      "Friday"
+    ],
+    "duration": 50,
+    "id": "1752986103348"
+  }
+]

@@ -1,0 +1,89 @@
+[
+  {
+    "id": "1",
+    "name": "Dr. Sarah Johnson",
+    "email": "sarah.johnson@school.edu",
+    "phone": "+1 (555) 123-4567",
+    "department": "Mathematics",
+    "subjects": [
+      "Advanced Mathematics",
+      "Calculus",
+      "Statistics"
+    ],
+    "availability": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Friday"
+    ]
+  },
+  {
+    "id": "2",
+    "name": "Prof. Michael Smith",
+    "email": "michael.smith@school.edu",
+    "phone": "+1 (555) 234-5678",
+    "department": "Computer Science",
+    "subjects": [
+      "Programming",
+      "Data Structures",
+      "Algorithms"
+    ],
+    "availability": [
+      "Monday",
+      "Wednesday",
+      "Thursday",
+      "Friday"
+    ]
+  },
+  {
+    "id": "3",
+    "name": "Dr. Emily Davis",
+    "email": "emily.davis@school.edu",
+    "phone": "+1 (555) 345-6789",
+    "department": "Physics",
+    "subjects": [
+      "General Physics",
+      "Quantum Mechanics",
+      "Laboratory"
+    ],
+    "availability": [
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday"
+    ]
+  },
+  {
+    "id": "4",
+    "name": "Prof. John Wilson",
+    "email": "john.wilson@school.edu",
+    "phone": "+1 (555) 456-7890",
+    "department": "English",
+    "subjects": [
+      "English Literature",
+      "Creative Writing",
+      "Poetry"
+    ],
+    "availability": [
+      "Monday",
+      "Tuesday",
+      "Thursday",
+      "Friday"
+    ]
+  },
+  {
+    "name": "Akshit Verma",
+    "email": "vermaakshit@outlook.com",
+    "phone": "9036909457",
+    "department": "CSE",
+    "subjects": [
+      "Data Structures",
+      "Calculus"
+    ],
+    "availability": [
+      "Saturday",
+      "Friday"
+    ],
+    "id": "1752986139573"
+  }
+]

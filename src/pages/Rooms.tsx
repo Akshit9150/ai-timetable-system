@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Search, MapPin, Users, Monitor } from 'lucide-react';
 
 interface Room {
@@ -14,52 +14,9 @@ interface Room {
 }
 
 const Rooms: React.FC = () => {
-  const [rooms, setRooms] = useState<Room[]>([
-    {
-      id: '1',
-      name: 'Main Lecture Hall',
-      number: 'A-101',
-      capacity: 120,
-      type: 'classroom',
-      building: 'Academic Block A',
-      floor: 1,
-      equipment: ['Projector', 'Whiteboard', 'Audio System', 'AC'],
-      availability: true
-    },
-    {
-      id: '2',
-      name: 'Computer Laboratory',
-      number: 'B-201',
-      capacity: 40,
-      type: 'laboratory',
-      building: 'Academic Block B',
-      floor: 2,
-      equipment: ['Computers', 'Projector', 'Whiteboard', 'AC', 'Internet'],
-      availability: true
-    },
-    {
-      id: '3',
-      name: 'Physics Lab',
-      number: 'C-102',
-      capacity: 30,
-      type: 'laboratory',
-      building: 'Science Block C',
-      floor: 1,
-      equipment: ['Lab Equipment', 'Safety Gear', 'Fume Hood', 'Storage'],
-      availability: false
-    },
-    {
-      id: '4',
-      name: 'Seminar Room',
-      number: 'A-305',
-      capacity: 25,
-      type: 'seminar',
-      building: 'Academic Block A',
-      floor: 3,
-      equipment: ['Projector', 'Whiteboard', 'Conference Table', 'AC'],
-      availability: true
-    }
-  ]);
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const [showModal, setShowModal] = useState(false);
   const [editingRoom, setEditingRoom] = useState<Room | null>(null);
@@ -88,28 +45,90 @@ const Rooms: React.FC = () => {
     'Storage', 'Fume Hood', 'Smart Board', 'Microphone'
   ];
 
+  // API functions
+  const fetchRooms = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('http://localhost:5001/api/rooms');
+      if (!response.ok) throw new Error('Failed to fetch rooms');
+      const data = await response.json();
+      setRooms(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch rooms');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const addRoomAPI = async (roomData: Omit<Room, 'id'>) => {
+    try {
+      const response = await fetch('http://localhost:5001/api/rooms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(roomData)
+      });
+      if (!response.ok) throw new Error('Failed to add room');
+      const newRoom = await response.json();
+      setRooms(prev => [...prev, newRoom]);
+      return newRoom;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to add room');
+      throw err;
+    }
+  };
+
+  const updateRoomAPI = async (id: string, roomData: Partial<Room>) => {
+    try {
+      const response = await fetch(`http://localhost:5001/api/rooms/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(roomData)
+      });
+      if (!response.ok) throw new Error('Failed to update room');
+      const updated = await response.json();
+      setRooms(prev => prev.map(r => r.id === id ? updated : r));
+      return updated;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update room');
+      throw err;
+    }
+  };
+
+  const deleteRoomAPI = async (id: string) => {
+    try {
+      const response = await fetch(`http://localhost:5001/api/rooms/${id}`, {
+        method: 'DELETE'
+      });
+      if (!response.ok) throw new Error('Failed to delete room');
+      setRooms(prev => prev.filter(r => r.id !== id));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete room');
+      throw err;
+    }
+  };
+
+  useEffect(() => {
+    fetchRooms();
+  }, []);
+
   const filteredRooms = rooms.filter(room =>
     room.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     room.number.toLowerCase().includes(searchTerm.toLowerCase()) ||
     room.building.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (editingRoom) {
-      setRooms(rooms.map(room => 
-        room.id === editingRoom.id 
-          ? { ...room, ...formData }
-          : room
-      ));
-    } else {
-      const newRoom: Room = {
-        id: Date.now().toString(),
-        ...formData
-      };
-      setRooms([...rooms, newRoom]);
+    try {
+      if (editingRoom) {
+        await updateRoomAPI(editingRoom.id, formData);
+      } else {
+        await addRoomAPI(formData);
+      }
+      resetForm();
+    } catch (error) {
+      console.error('Failed to save room:', error);
     }
-    resetForm();
   };
 
   const resetForm = () => {
@@ -142,8 +161,12 @@ const Rooms: React.FC = () => {
     setShowModal(true);
   };
 
-  const handleDelete = (id: string) => {
-    setRooms(rooms.filter(room => room.id !== id));
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteRoomAPI(id);
+    } catch (error) {
+      console.error('Failed to delete room:', error);
+    }
   };
 
   const handleEquipmentChange = (equipment: string) => {
@@ -173,6 +196,21 @@ const Rooms: React.FC = () => {
           <span>Add Room</span>
         </button>
       </div>
+
+      {/* Error Message */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+          {error}
+        </div>
+      )}
+
+      {/* Loading State */}
+      {loading && (
+        <div className="text-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div>
+          <p className="mt-2 text-gray-600">Loading rooms...</p>
+        </div>
+      )}
 
       {/* Search */}
       <div className="relative">
@@ -307,7 +345,7 @@ const Rooms: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                    <label className="block text sm font-medium text-gray-700 mb-1">Type</label>
                     <select
                       value={formData.type}
                       onChange={(e) => setFormData({...formData, type: e.target.value as Room['type']})}

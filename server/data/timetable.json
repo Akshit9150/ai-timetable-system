@@ -1,6 +1,6 @@
 [
   {
-    "id": "17529873859580",
+    "id": "1001",
     "course": "Advanced Mathematics",
     "teacher": "Dr. Sarah Johnson",
     "room": "A-101",
@@ -11,35 +11,57 @@
     "duration": 90
   },
   {
-    "id": "17529873859581",
+    "id": "1002",
+    "course": "Computer Science Fundamentals",
+    "teacher": "Prof. Michael Smith",
+    "room": "B-201",
+    "startTime": "09:45",
+    "endTime": "11:15",
+    "day": "Tuesday",
+    "type": "lecture",
+    "duration": 90
+  },
+  {
+    "id": "1003",
+    "course": "Physics Lab",
+    "teacher": "Dr. Emily Davis",
+    "room": "Lab-301",
+    "startTime": "14:00",
+    "endTime": "17:00",
+    "day": "Thursday",
+    "type": "lab",
+    "duration": 180
+  },
+  {
+    "id": "1004",
+    "course": "English Literature",
+    "teacher": "Prof. John Wilson",
+    "room": "C-105",
+    "startTime": "08:00",
+    "endTime": "09:30",
+    "day": "Friday",
+    "type": "lecture",
+    "duration": 90
+  },
+  {
+    "id": "1005",
+    "course": "Advanced Mathematics",
+    "teacher": "Dr. Sarah Johnson",
+    "room": "A-101",
+    "startTime": "09:45",
+    "endTime": "11:15",
+    "day": "Wednesday",
+    "type": "lecture",
+    "duration": 90
+  },
+  {
+    "id": "1006",
     "course": "Computer Science Fundamentals",
     "teacher": "Prof. Michael Smith",
     "room": "B-201",
     "startTime": "08:00",
     "endTime": "09:30",
-    "day": "Monday",
-    "type": "lecture",
-    "duration": 90
-  },
-  {
-    "id": "17529873859582",
-    "course": "Physics Lab",
-    "teacher": "Prof. John Wilson",
-    "room": "Lab-301",
-    "startTime": "08:00",
-    "endTime": "09:30",
-    "day": "Monday",
-    "type": "lecture",
-    "duration": 90
-  },
-  {
-    "id": "17529873859583",
-    "course": "English Literature",
-    "teacher": "Dr. Sarah Johnson",
-    "room": "A-101",
-    "startTime": "08:00",
-    "endTime": "09:30",
-    "day": "Tuesday",
+    "day": "Thursday",
     "type": "lecture",
     "duration": 90
   }

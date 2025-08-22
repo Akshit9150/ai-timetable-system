@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Search, BookOpen } from 'lucide-react';
 
 interface Course {
@@ -12,35 +12,9 @@ interface Course {
 }
 
 const Courses: React.FC = () => {
-  const [courses, setCourses] = useState<Course[]>([
-    {
-      id: '1',
-      name: 'Advanced Mathematics',
-      code: 'MATH301',
-      credits: 3,
-      department: 'Mathematics',
-      semester: 'Fall 2024',
-      description: 'Advanced mathematical concepts and applications'
-    },
-    {
-      id: '2',
-      name: 'Computer Science Fundamentals',
-      code: 'CS101',
-      credits: 4,
-      department: 'Computer Science',
-      semester: 'Fall 2024',
-      description: 'Introduction to programming and computer science principles'
-    },
-    {
-      id: '3',
-      name: 'Physics Laboratory',
-      code: 'PHYS201',
-      credits: 2,
-      department: 'Physics',
-      semester: 'Fall 2024',
-      description: 'Hands-on physics experiments and data analysis'
-    }
-  ]);
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const [showModal, setShowModal] = useState(false);
   const [editingCourse, setEditingCourse] = useState<Course | null>(null);
@@ -54,28 +28,90 @@ const Courses: React.FC = () => {
     description: ''
   });
 
+  // API functions
+  const fetchCourses = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('http://localhost:5001/api/courses');
+      if (!response.ok) throw new Error('Failed to fetch courses');
+      const data = await response.json();
+      setCourses(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch courses');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const addCourseAPI = async (courseData: Omit<Course, 'id'>) => {
+    try {
+      const response = await fetch('http://localhost:5001/api/courses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(courseData)
+      });
+      if (!response.ok) throw new Error('Failed to add course');
+      const newCourse = await response.json();
+      setCourses(prev => [...prev, newCourse]);
+      return newCourse;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to add course');
+      throw err;
+    }
+  };
+
+  const updateCourseAPI = async (id: string, courseData: Partial<Course>) => {
+    try {
+      const response = await fetch(`http://localhost:5001/api/courses/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(courseData)
+      });
+      if (!response.ok) throw new Error('Failed to update course');
+      const updated = await response.json();
+      setCourses(prev => prev.map(c => c.id === id ? updated : c));
+      return updated;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update course');
+      throw err;
+    }
+  };
+
+  const deleteCourseAPI = async (id: string) => {
+    try {
+      const response = await fetch(`http://localhost:5001/api/courses/${id}`, {
+        method: 'DELETE'
+      });
+      if (!response.ok) throw new Error('Failed to delete course');
+      setCourses(prev => prev.filter(c => c.id !== id));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete course');
+      throw err;
+    }
+  };
+
+  useEffect(() => {
+    fetchCourses();
+  }, []);
+
   const filteredCourses = courses.filter(course =>
     course.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     course.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
     course.department.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (editingCourse) {
-      setCourses(courses.map(course => 
-        course.id === editingCourse.id 
-          ? { ...course, ...formData }
-          : course
-      ));
-    } else {
-      const newCourse: Course = {
-        id: Date.now().toString(),
-        ...formData
-      };
-      setCourses([...courses, newCourse]);
+    try {
+      if (editingCourse) {
+        await updateCourseAPI(editingCourse.id, formData);
+      } else {
+        await addCourseAPI(formData);
+      }
+      resetForm();
+    } catch (error) {
+      console.error('Failed to save course:', error);
     }
-    resetForm();
   };
 
   const resetForm = () => {
@@ -104,8 +140,12 @@ const Courses: React.FC = () => {
     setShowModal(true);
   };
 
-  const handleDelete = (id: string) => {
-    setCourses(courses.filter(course => course.id !== id));
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteCourseAPI(id);
+    } catch (error) {
+      console.error('Failed to delete course:', error);
+    }
   };
 
   return (
@@ -124,6 +164,21 @@ const Courses: React.FC = () => {
           <span>Add Course</span>
         </button>
       </div>
+
+      {/* Error */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+          {error}
+        </div>
+      )}
+
+      {/* Loading */}
+      {loading && (
+        <div className="text-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-2 text-gray-600">Loading courses...</p>
+        </div>
+      )}
 
       {/* Search */}
       <div className="relative">

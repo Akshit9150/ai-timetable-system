@@ -321,35 +321,50 @@ export const generateTimetable = () => {
       if (assigned) break;
     }
 
-    // If we couldn't assign the course to any available slot, try to find any free slot
+    // SAFER FALLBACK: Try any free slot while STILL respecting teacher availability and existing bookings
     if (!assigned) {
       for (const slotKey in timeSlotAvailability) {
         const slot = timeSlotAvailability[slotKey];
-        if (!slot.isOccupied) {
-          const teacher = teachers[courseIndex % teachers.length];
-          const room = rooms[courseIndex % rooms.length];
+        if (slot.isOccupied) continue;
 
-          // Mark time slot as occupied
-          slot.isOccupied = true;
-          slot.course = course.name;
-          slot.teacher = teacher.name;
-          slot.room = room.name;
+        // Find a teacher available on slot.day and not scheduled at this slot
+        const candidateTeacher = teachers.find(t => 
+          t.availability && t.availability.includes(slot.day) &&
+          !teacherAvailability[t.name].scheduledSlots.includes(slotKey)
+        );
 
-          generatedTimetable.push({
-            id: Date.now().toString() + courseIndex,
-            course: course.name,
-            teacher: teacher.name,
-            room: room.name,
-            startTime: slot.startTime,
-            endTime: slot.endTime,
-            day: slot.day,
-            type: slot.type,
-            duration: slot.duration
-          });
+        if (!candidateTeacher) continue;
 
-          assigned = true;
-          break;
-        }
+        // Find a room not scheduled at this slot
+        const candidateRoom = rooms.find(r => 
+          !roomAvailability[r.name].scheduledSlots.includes(slotKey)
+        );
+
+        if (!candidateRoom) continue;
+
+        // Assign and mark as scheduled
+        slot.isOccupied = true;
+        slot.course = course.name;
+        slot.teacher = candidateTeacher.name;
+        slot.room = candidateRoom.name;
+
+        teacherAvailability[candidateTeacher.name].scheduledSlots.push(slotKey);
+        roomAvailability[candidateRoom.name].scheduledSlots.push(slotKey);
+
+        generatedTimetable.push({
+          id: Date.now().toString() + courseIndex,
+          course: course.name,
+          teacher: candidateTeacher.name,
+          room: candidateRoom.name,
+          startTime: slot.startTime,
+          endTime: slot.endTime,
+          day: slot.day,
+          type: slot.type,
+          duration: slot.duration
+        });
+
+        assigned = true;
+        break;
       }
     }
   });

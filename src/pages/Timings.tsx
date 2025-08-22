@@ -147,8 +147,12 @@ const Timings: React.FC = () => {
     setShowModal(true);
   };
 
-  const handleDelete = (id: string) => {
-    setTimeSlots(timeSlots.filter(slot => slot.id !== id));
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteTimingAPI(id);
+    } catch (error) {
+      console.error('Failed to delete timing:', error);
+    }
   };
 
   const handleDayChange = (day: string) => {
